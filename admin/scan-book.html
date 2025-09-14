@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan Book Barcode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h2>Scan Book Barcode</h2>
+    <div id="scanner" style="width:100%; max-width:500px; height:300px;"></div>
+    <p id="result"></p>
+
+    <!-- QuaggaJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+
+    <script>
+        Quagga.init({
+            inputStream : {
+                name : "Live",
+                type : "LiveStream",
+                target: document.querySelector('#scanner'),
+                constraints: {
+                    facingMode: "environment"
+                }
+            },
+            decoder : {
+                readers : ["code_128_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.error("Quagga init error:", err);
+                return;
+            }
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function(data) {
+            let code = data.codeResult.code;
+            document.getElementById("result").innerText = "Scanned: " + code;
+
+            // Redirect to view-book.php
+            window.location.href = "view-book.php?barcode=" + code;
+
+            Quagga.stop();
+        });
+    </script>
+</body>
+</html>
